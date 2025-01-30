@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vulnerability Scanner</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      input,
+      button {
+        padding: 10px;
+        margin-top: 10px;
+      }
+      .vuln-container {
+        margin-top: 20px;
+      }
+      .vuln {
+        border-bottom: 1px solid #ddd;
+        padding: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Vulnerability Scanner</h2>
+    <form method="POST">
+      <input type="text" name="ip" placeholder="Enter IP Address" required />
+      <button type="submit">Scan</button>
+    </form>
+
+    {% if results %}
+    <div class="vuln-container">
+      <h3>Scan Results:</h3>
+      {% for result in results %}
+      <div class="vuln">
+        <strong>Port:</strong> {{ result.port }}<br />
+        <strong>Service:</strong> {{ result.service }} ({{ result.product }} {{
+        result.version }})<br />
+        <strong>Vulnerabilities:</strong> <br />
+        <pre>{{ result.vulners_output }}</pre>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %} {% if error %}
+    <div style="color: red">{{ error }}</div>
+    {% endif %}
+  </body>
+</html>
