@@ -1,0 +1,68 @@
+/* General Styles */
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 20px;
+  background-color: #f4f4f4;
+  text-align: center;
+}
+
+/* Container */
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Input & Button */
+input, button {
+  padding: 10px;
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+button {
+  background-color: #28a745;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #218838;
+}
+
+/* Vulnerability Container */
+.vuln-container {
+  margin-top: 20px;
+  text-align: left;
+}
+
+.vuln {
+  background: #fff3cd;
+  padding: 10px;
+  border-left: 5px solid #ff6b6b;
+  margin-top: 10px;
+  border-radius: 5px;
+}
+
+/* Error Message */
+.error {
+  color: red;
+  margin-top: 10px;
+}
+
+/* Loading Animation */
+#loading {
+  font-size: 18px;
+  color: #007bff;
+  display: none;
+}
+
+.hidden {
+  display: none;
+}

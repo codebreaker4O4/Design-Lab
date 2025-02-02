@@ -9,13 +9,17 @@ from dotenv import load_dotenv
 import ipaddress
 
 # Load environment variables from.env file
-load_dotenv()
+# load_dotenv()
 
 app = Flask(__name__)
 
-VULNERS_URL = "https://vulners.com/api/v3/search/id/"
-VULNERS_API_KEY = os.getenv("VULNERS_API_KEY")
+# VULNERS_URL = "https://vulners.com/api/v3/search/id/"
+# VULNERS_API_KEY = os.getenv("VULNERS_API_KEY")
 
+# if not VULNERS_API_KEY:
+#     print("VULNERS_API_KEY is not set or is empty!")
+# else:
+#     print("VULNERS_API_KEY is loaded successfully.")
 
 def parse_vulners_output(output):
     """Parse and sanitize Vulners script output."""
@@ -40,9 +44,13 @@ def scan_vulnerabilities(ip):
     """Scan vulnerabilities for a given IP address"""
     try:
         validate_ip_addr(ip)
+        print(f"Scanning IP: {ip}")  # Debugging
+
         nm = nmap.PortScanner()
-        nm.scan(ip, arguments="-sV --script vulners --max-rate 100")
         
+        nm.scan(ip, arguments="-sV --script vulners")
+        print(f"Scan Results: {nm.all_hosts()}")  # Debugging
+
         vulnerabilities = []
         for host in nm.all_hosts():
             for proto in nm[host].all_protocols():
@@ -60,81 +68,45 @@ def scan_vulnerabilities(ip):
                         
                         if vulners_output:
                             vulns = parse_vulners_output(vulners_output)
-                            for vuln in vulns:
-                                vuln_details = fetch_vulnerability_details(vuln)
-                                if vuln_details:
-                                    vulnerabilities.append({
-                                        "port": port,
-                                        "service": service,
-                                        "product": product,
-                                        "version": version,
-                                        "vuln_id": vuln,
-                                        "details": vuln_details
-                                    })
+                        for vuln_id in vulners_output.split("\n"):
+                            if vuln_id.strip():
+                                # vuln_details = fetch_vulnerability_details(vuln_id)
+                                vulnerabilities.append({
+                                    "port": port,
+                                    "service": service,
+                                    "product": product,
+                                    "version": version,
+                                    "vuln_id": vuln_id,
+                                    "details": "None"
+                                })
+                          
                     except Exception as e:
-                        app.logger.error(f"Error processing port {port}: {str(e)}")
-                        continue
-                            
-        return vulnerabilities
+                        print(f"Error fetching vulnerability details for {vuln_id} on port {port}: {str(e)}")
     except Exception as e:
-        app.logger.error(f"Scan failed: {str(e)}")
-        raise
-    #                 for vuln_id in vulners_output.split("\n"):
-    #                     if vuln_id.strip():
-    #                         vuln_details = fetch_vulnerability_details(vuln_id)
-    #                         vulnerabilities.append({
-    #                             "port": port,
-    #                             "service": service,
-    #                             "product": product,
-    #                             "version": version,
-    #                             "vuln_id": vuln_id,
-    #                             "details": vuln_details
-    #                         })
-    # return vulnerabilities
+        app.logger.error(f"Error scanning vulnerabilities for {ip}: {str(e)}")
+        print("Error")
+    return vulnerabilities
 
 
-def fetch_vulnerability_details(vuln_id):
-    """Fetch vulnerability details from Vulners API"""
-    if not VULNERS_API_KEY:
-        raise ValueError("Vulners API key is not configured.")
-    try:
-    #     response = requests.get(f"{VULNERS_URL}?id={vuln_id}&apiKey={VULNERS_API_KEY}")
-    #     data = response.json()
-    #     if "data" in data and data["data"]:
-    #         return data["data"].get("description", "No description available.")
-    # except Exception as e:
-    #     print(f"Error fetching details for {vuln_id}: {e}")
-    # return "No details found."
-        headers = {
-            'User-Agent': 'Security Scanner/1.0',
-            'Accept': 'application/json'
-        }
+
+# def fetch_vulnerability_details(vuln_id):
+#     """Fetch vulnerability details from Vulners API"""
+#     if not VULNERS_API_KEY:
+#         raise ValueError("Vulners API key is not configured.")
+#     try:
+#         response = requests.get(f"{VULNERS_URL}?id={vuln_id}&apiKey={VULNERS_API_KEY}")
+#         data = response.json()
+#         if "data" in data and data["data"]:
+#             print(f"Request URL: {response.url}")  # Debugging
+#             print(f"Response Code: {response.status_code}")  # Debugging
+#             print(f"Response JSON: {response.text}")  # Debugging
+#             return data["data"].get("description", "No description available.")
+#     except Exception as e:
+#         print(f"Error fetching details for {vuln_id}: {e}")
+#         print(f"Error fetching details for {vuln_id}")
+#         return "No details found."
         
-        params = {
-            'id': vuln_id,
-            'apiKey': VULNERS_API_KEY
-        }
-        
-        response = requests.get(
-            VULNERS_URL,
-            params=params,
-            headers=headers,
-            timeout=10
-        )
-        
-        response.raise_for_status()
-        data = response.json()
-        
-        if "data" in data and data["data"]:
-            return data["data"].get("description", "No description available.")
-            
-    except requests.exceptions.RequestException as e:
-        app.logger.error(f"Error fetching details for {vuln_id}: {str(e)}")
-        
-    except json.JSONDecodeError as e:
-        app.logger.error(f"Error parsing response for {vuln_id}: {str(e)}")
-        
-    return None
+
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -144,7 +116,7 @@ def index():
     
     if request.method == "POST":
         try:
-            ip = request.form.get("ip").strip()
+            ip = request.form.get("ip")
             if not ip:
                 raise ValueError("Ip address is required")
             
