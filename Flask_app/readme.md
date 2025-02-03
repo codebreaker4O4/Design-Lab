@@ -20,7 +20,7 @@ A **Flask-based web application** that scans a given IP address for vulnerabilit
 ### 1️⃣ Clone the repository
 
 ```bash
-git clone https://github.com/codebreaker4O4/vulnerability-scanner.git
+git clone https://github.com/codebreaker4O4/Design-Lab.git
 cd vulnerability-scanner
 ```
 
