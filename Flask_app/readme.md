@@ -21,7 +21,7 @@ A **Flask-based web application** that scans a given IP address for vulnerabilit
 
 ```bash
 git clone https://github.com/codebreaker4O4/Design-Lab.git
-cd vulnerability-scanner
+cd Design-Lab
 ```
 
 ### 2️⃣ Set up a virtual environment (recommended)
