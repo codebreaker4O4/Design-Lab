@@ -40,8 +40,12 @@ button:hover {
 .vuln-container {
   margin-top: 20px;
   text-align: left;
+  padding: 10px;
+  background: #e9ecef;
+  border-radius: 5px;
 }
 
+/* Individual Vulnerability */
 .vuln {
   background: #fff3cd;
   padding: 10px;
@@ -54,6 +58,7 @@ button:hover {
 .error {
   color: red;
   margin-top: 10px;
+  font-weight: bold;
 }
 
 /* Loading Animation */

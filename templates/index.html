@@ -6,41 +6,41 @@
     <title>Vulnerability Scanner</title>
     <link
       rel="stylesheet"
-      href="{{ url_for('static',filename='style.css') }}"
+      href="{{ url_for('static', filename='style.css') }}"
     />
   </head>
   <body>
-    <h2>Vulnerability Scanner</h2>
-    <form id="scan-form" method="POST">
-      <input type="text" name="ip" placeholder="Enter IP Address" required />
-      <button type="submit">Scan</button>
-    </form>
-    <div id="loading" class="hidden">🔄Scanning...</div>
-    {% if results %}
-    <div class="vuln-container">
-      <h3>Scan Results:</h3>
-      {% for result in results %}
-      <div class="vuln">
-        <strong>Port:</strong> {{ result.port }}<br />
-        <strong>Service:</strong> {{ result.service }}<br />
-        <strong>Product:</strong> {{ result.product }}<br />
-        <strong>Version:</strong> {{ result.version }}<br />
-        <strong>Vulnerabilities:</strong> <br />
-        <ul>
-          {% if result.vuln_id %}
-          <li><strong>ID:</strong> {{ result.vuln_id }}</li>
-          <li><strong>Details:</strong> {{ result.details }}</li>
-          {% else %}
-          <li>No vulnerabilities found✅</li>
-          {% endif %}
-        </ul>
-        <hr />
+    <div class="container">
+      <h2>Vulnerability Scanner</h2>
+      <form id="scan-form" method="POST">
+        <input type="text" name="ip" placeholder="Enter IP Address" required />
+        <button type="submit">Scan</button>
+      </form>
+      <div id="loading" class="hidden">🔄 Scanning...</div>
+
+      {% if results %}
+      <div class="vuln-container">
+        <h3>Scan Results:</h3>
+        {% if results|length == 0 %}
+        <p>No vulnerabilities found ✅</p>
+        {% else %} {% for result in results %}
+        <div class="vuln">
+          <strong>Port:</strong> {{ result.port }}<br />
+          <strong>Service:</strong> {{ result.service }}<br />
+          <strong>Product:</strong> {{ result.product }}<br />
+          <strong>Version:</strong> {{ result.version }}<br />
+          <strong>Vulnerability ID:</strong> {{ result.vuln_id }}<br />
+          <strong>Description:</strong> {{ result.Description }}<br />
+          <strong>CVSS Score:</strong> {{ result["CVSS Score"] }}<br />
+          <hr />
+        </div>
+        {% endfor %} {% endif %}
       </div>
-      {% endfor %}
+      {% endif %} {% if error %}
+      <div class="error">{{ error }}</div>
+      {% endif %}
     </div>
-    {% endif %} {% if error %}
-    <div style="color: red">{{ error }}</div>
-    {% endif %}
-    <script src="{{ url_for('static', filename='script.js') }}?v=1.1"></script>
+
+    <script src="{{ url_for('static', filename='script.js') }}?v=1.2"></script>
   </body>
 </html>
